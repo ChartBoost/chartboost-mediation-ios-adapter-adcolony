@@ -67,6 +67,7 @@ final class AdColonyAdAdapter: NSObject, PartnerLogger, PartnerErrorFactory {
                 return completion(.failure(error))
             }
             loadBanner(viewController: viewController, request: request, completion: loadCompletion)
+
         case .interstitial, .rewarded:
             loadInterstitial(request: request, completion: loadCompletion)
         }
@@ -82,6 +83,7 @@ final class AdColonyAdAdapter: NSObject, PartnerLogger, PartnerErrorFactory {
             // Banner does not have a separate show mechanism
             log(.showSucceeded(partnerAd))
             completion(.success(partnerAd))
+
         case .interstitial, .rewarded:
             guard let viewController = viewController else {
                 let error = error(.noViewController)

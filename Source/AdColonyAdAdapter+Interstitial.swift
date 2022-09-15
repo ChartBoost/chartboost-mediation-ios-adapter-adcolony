@@ -24,12 +24,14 @@ extension AdColonyAdAdapter: AdColonyInterstitialDelegate {
 
         let options = AdColonyAdOptions()
         options.setOption("adm", withStringValue: bidPayload)
+
         if request.format == .rewarded {
             zone.setReward { [weak self] success, _, amount in
                 guard let self = self, success else { return }
                 self.didReceiveReward(amount: Int(amount))
             }
         }
+
         AdColony.requestInterstitial(inZone: request.partnerPlacement, options: options, andDelegate: self)
     }
 
@@ -41,7 +43,9 @@ extension AdColonyAdAdapter: AdColonyInterstitialDelegate {
         guard let ad = partnerAd.ad as? AdColonyInterstitial else {
             return completion(.failure(error(.showFailure(partnerAd), description: "Ad instance is nil/not a AdColonyInterstitial.")))
         }
+
         ad.show(withPresenting: viewController)
+
         return completion(.success(partnerAd))
     }
 

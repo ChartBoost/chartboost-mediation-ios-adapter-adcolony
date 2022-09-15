@@ -2,7 +2,7 @@ Pod::Spec.new do |spec|
   spec.name        = 'ChartboostHeliumAdapterAdColony'
   spec.version     = '4.4.8.0.0'
   spec.license     = { :type => 'MIT', :file => 'LICENSE.md' }
-  spec.homepage    = 'https://github.com/ChartBoost/helium-ios-adapter-chartboost'
+  spec.homepage    = 'https://github.com/ChartBoost/helium-ios-adapter-adcolony'
   spec.authors     = { 'Chartboost' => 'https://www.chartboost.com/' }
   spec.summary     = 'Helium iOS SDK Ad Colony adapter.'
   spec.description = 'Ad Colony Adapters for mediating through Helium. Supported ad formats: Banner, Interstitial, and Rewarded.'

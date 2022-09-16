@@ -13,21 +13,23 @@ extension AdColonyAdAdapter {
     ///   - viewController: The ViewController for ad presentation purposes.
     ///   - request: The relevant data associated with the current ad load call.
     func loadBanner(viewController: UIViewController, request: PartnerAdLoadRequest) {
-        let result = validateLoadRequest(request)
-        switch result {
-        case .failure(let error):
-            loadCompletion?(.failure(error))
-
-        case .success(let bidPayload):
-            let width = request.size?.width ?? 320
-            let height = request.size?.height ?? 50
-            let size = AdColonyAdSizeMake(width, height)
-
-            let options = AdColonyAdOptions()
-            options.setOption("adm", withStringValue: bidPayload)
-
-            AdColony.requestAdView(inZone: request.partnerPlacement, with: size, andOptions: options, viewController: viewController, andDelegate: self)
+        guard request.partnerPlacement == zone.identifier else {
+            loadCompletion?(.failure(error(.loadFailure(request), description: "partnerPlacement != zone.identifier")))
+            return
         }
+        guard let bidPayload = request.adm, !bidPayload.isEmpty else {
+            loadCompletion?(.failure(error(.noBidPayload(request))))
+            return
+        }
+
+        let width = request.size?.width ?? 320
+        let height = request.size?.height ?? 50
+        let size = AdColonyAdSizeMake(width, height)
+
+        let options = AdColonyAdOptions()
+        options.setOption("adm", withStringValue: bidPayload)
+
+        AdColony.requestAdView(inZone: request.partnerPlacement, with: size, andOptions: options, viewController: viewController, andDelegate: self)
     }
 }
 

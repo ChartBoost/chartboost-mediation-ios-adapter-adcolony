@@ -12,26 +12,24 @@ extension AdColonyAdAdapter: AdColonyInterstitialDelegate {
     /// - Parameters:
     ///   - request: The relevant data associated with the current ad load call.
     func loadInterstitial(request: PartnerAdLoadRequest) {
-        guard request.partnerPlacement == zone.identifier else {
-            loadCompletion?(.failure(error(.loadFailure(request), description: "partnerPlacement != zone.identifier")))
-            return
-        }
-        guard let bidPayload = request.adm, !bidPayload.isEmpty else {
-            loadCompletion?(.failure(error(.noBidPayload(request))))
-            return
-        }
+        let result = validateLoadRequest(request)
+        switch result {
+        case .failure(let error):
+            loadCompletion?(.failure(error))
 
-        let options = AdColonyAdOptions()
-        options.setOption("adm", withStringValue: bidPayload)
+        case .success(let bidPayload):
+            let options = AdColonyAdOptions()
+            options.setOption("adm", withStringValue: bidPayload)
 
-        if request.format == .rewarded {
-            zone.setReward { [weak self] success, _, amount in
-                guard let self = self, success else { return }
-                self.didReceiveReward(amount: Int(amount))
+            if request.format == .rewarded {
+                zone.setReward { [weak self] success, _, amount in
+                    guard let self = self, success else { return }
+                    self.didReceiveReward(amount: Int(amount))
+                }
             }
-        }
 
-        AdColony.requestInterstitial(inZone: request.partnerPlacement, options: options, andDelegate: self)
+            AdColony.requestInterstitial(inZone: request.partnerPlacement, options: options, andDelegate: self)
+        }
     }
 
     /// Attempt to show the currently loaded interstitial ad.

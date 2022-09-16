@@ -9,6 +9,9 @@ import AdColony
 import UIKit
 
 final class AdColonyAdAdapter: NSObject, PartnerLogger, PartnerErrorFactory {
+
+    typealias BidPayload = String
+
     /// The current adapter instance
     let adapter: PartnerAdapter
 
@@ -87,5 +90,17 @@ final class AdColonyAdAdapter: NSObject, PartnerLogger, PartnerErrorFactory {
         case .interstitial, .rewarded:
             completion(showInterstitial(viewController: viewController))
         }
+    }
+
+    // MARK: - Utility
+
+    func validateLoadRequest(_ request: PartnerAdLoadRequest) -> Result<BidPayload, Error> {
+        guard request.partnerPlacement == zone.identifier else {
+            return .failure(error(.loadFailure(request), description: "partnerPlacement != zone.identifier"))
+        }
+        guard let bidPayload = request.adm, !bidPayload.isEmpty else {
+            return .failure(error(.noBidPayload(request)))
+        }
+        return .success(bidPayload)
     }
 }

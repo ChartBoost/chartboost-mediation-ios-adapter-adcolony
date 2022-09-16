@@ -48,6 +48,7 @@ extension AdColonyAdAdapter: AdColonyInterstitialDelegate {
 
         ad.show(withPresenting: viewController)
 
+        log(.loadSucceeded(partnerAd))
         return completion(.success(partnerAd))
     }
 

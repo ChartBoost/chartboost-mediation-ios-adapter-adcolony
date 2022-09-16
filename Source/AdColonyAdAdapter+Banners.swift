@@ -14,7 +14,7 @@ extension AdColonyAdAdapter {
     ///   - request: The relevant data associated with the current ad load call.
     func loadBanner(viewController: UIViewController, request: PartnerAdLoadRequest) {
         guard request.partnerPlacement == zone.identifier else {
-            loadCompletion?(.failure(error(.loadFailure(request), description: "partnerPlacement != zone.identifier")))
+            loadCompletion?(.failure(error(.loadFailure(request), description: "Placement is different from the zone identifier.")))
             return
         }
         guard let bidPayload = request.adm, !bidPayload.isEmpty else {

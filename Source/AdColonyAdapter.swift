@@ -155,7 +155,6 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
         } else {
             let error = error(.noAdReadyToShow(partnerAd))
             log(.showFailed(partnerAd, error: error))
-
             completion(.failure(error))
         }
     }

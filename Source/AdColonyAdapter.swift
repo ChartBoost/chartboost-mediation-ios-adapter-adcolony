@@ -93,7 +93,6 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// Notify the partner SDK of GDPR applicability as determined by the Helium SDK.
     /// - Parameter applies: true if GDPR applies, false otherwise.
     func setGDPRApplies(_ applies: Bool) {
-        log("The AdColony adapter has been notified that GDPR \(applies ? "applies" : "does not apply").")
         Self.options.setPrivacyFrameworkOfType(ADC_GDPR, isRequired: applies)
         AdColony.setAppOptions(Self.options)
    }
@@ -101,7 +100,6 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// Notify the partner SDK of the GDPR consent status as determined by the Helium SDK.
     /// - Parameter status: The user's current GDPR consent status.
     func setGDPRConsentStatus(_ status: GDPRConsentStatus) {
-        log("The AdColony adapter has been notified that the user's GDPR consent status is \(status).")
         guard status != .unknown else { return }
         Self.options.setPrivacyConsentString(status == .granted ? "1" : "0", forType: ADC_GDPR)
         AdColony.setAppOptions(Self.options)
@@ -110,7 +108,6 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// Notify the partner SDK of the COPPA subjectivity as determined by the Helium SDK.
     /// - Parameter isSubject: True if the user is subject to COPPA, false otherwise.
     func setUserSubjectToCOPPA(_ isSubject: Bool) {
-        log("The AdColony adapter has been notified that the user is \(isSubject ? "subject" : "not subject") to COPPA.")
         Self.options.setPrivacyFrameworkOfType(ADC_COPPA, isRequired: isSubject)
         AdColony.setAppOptions(Self.options)
     }
@@ -120,7 +117,6 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     ///   - hasGivenConsent: True if the user has given CCPA consent, false otherwise.
     ///   - privacyString: The CCPA privacy String.
     func setCCPAConsent(hasGivenConsent: Bool, privacyString: String?) {
-        log("The AdColony adapter has been notified that the user has \(hasGivenConsent ? "given" : "not given") CCPA consent.")
         Self.options.setPrivacyConsentString(hasGivenConsent ? "1" : "0", forType: ADC_CCPA)
         AdColony.setAppOptions(Self.options)
     }

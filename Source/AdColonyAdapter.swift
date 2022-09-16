@@ -63,7 +63,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
                 self.zones = zones.reduce(into: [ZoneIdentifier: AdColonyZone]()) {
                     $0[$1.identifier] = $1
                 }
-                
+
                 self.log(.setUpSucceded)
                 completion(nil)
             }
@@ -133,7 +133,9 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     func load(request: PartnerAdLoadRequest, partnerAdDelegate: PartnerAdDelegate, viewController: UIViewController?, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
         log(.loadStarted(request))
         guard let zone = zones[request.partnerPlacement] else {
-            return completion(.failure(error(.loadFailure(request), description: "zone not found for partner placement")))
+            let error = error(.loadFailure(request), description: "zone not found for partner placement")
+            log(.loadFailed(request, error: error))
+            return completion(.failure(error))
         }
 
         let adapter = AdColonyAdAdapter(adapter: self, request: request, partnerAdDelegate: partnerAdDelegate, zone: zone)

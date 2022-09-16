@@ -16,9 +16,9 @@ Pod::Spec.new do |spec|
   # Minimum supported versions
   spec.swift_version         = '5.0'
   spec.ios.deployment_target = '10.0'
-  
+
   # System frameworks used
-  spec.ios.frameworks = ['Foundation', 'SafariServices', 'UIKit', 'WebKit']
+  spec.ios.frameworks = ['Foundation', 'UIKit']
   
   # This adapter is compatible with all Helium 4.X versions of the SDK.
   spec.dependency 'ChartboostHelium', '~> 4.0'

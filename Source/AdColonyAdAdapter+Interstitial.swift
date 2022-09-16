@@ -41,7 +41,7 @@ extension AdColonyAdAdapter: AdColonyInterstitialDelegate {
     ///   - completion: The completion handler to notify Helium of ad show completion result.
     func showInterstitial(viewController: UIViewController, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
         guard let ad = partnerAd.ad as? AdColonyInterstitial else {
-            let error = error(.showFailure(partnerAd), description: "Ad instance is nil/not a AdColonyInterstitial.")
+            let error = error(.showFailure(partnerAd), description: "Ad instance is nil/not an AdColonyInterstitial.")
             log(.loadFailed(request, error: error))
             return completion(.failure(error))
         }

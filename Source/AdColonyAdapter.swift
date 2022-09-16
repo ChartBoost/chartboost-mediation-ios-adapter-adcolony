@@ -48,7 +48,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
         }
 
         Self.options.mediationNetwork = "Helium"
-        Self.options.mediationNetworkVersion = "4.0" // <-- there must be a better way
+        Self.options.mediationNetworkVersion = Helium.sdkVersion
 
         AdColony.configure(withAppID: appID, options: Self.options) { [weak self] zones in
             guard let self = self else { return }

@@ -58,9 +58,12 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
                 return completion(error)
             }
             else {
+                // Map the zones array into the zones dictionary property with the key
+                // being the zone.identifer and the value being the zone.
                 self.zones = zones.reduce(into: [ZoneIdentifier: AdColonyZone]()) {
                     $0[$1.identifier] = $1
                 }
+                
                 self.log(.setUpSucceded)
                 completion(nil)
             }

@@ -24,7 +24,8 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// Storage of adapter instances.  Keyed by the request identifier.
     var adapters: [String: AdColonyAdAdapter] = [:]
 
-    /// AdColony app options.  It's static, for the sake of configuration.
+    /// AdColony app options.  It's static, for the sake of AdColonyAdapterConfiguration needing to
+    /// amend these options for verbose logging, test mode, and perhaps others in the future.
     static var options: AdColonyAppOptions = {
         let options = AdColonyAppOptions()
         options.disableLogging = true

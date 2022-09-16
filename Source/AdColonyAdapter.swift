@@ -42,7 +42,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     func setUp(with configuration: PartnerConfiguration, completion: @escaping (Error?) -> Void) {
         log(.setUpStarted)
         guard let appID = configuration.appID, !appID.isEmpty else {
-            let error = error(.missingSetUpParameter(key: .appID))
+            let error = error(.missingSetUpParameter(key: .appIDKey))
             log(.setUpFailed(error))
             return completion(error)
         }
@@ -186,10 +186,10 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
 
 /// Convenience extension to access AdColony credentials from the configuration.
 private extension PartnerConfiguration {
-    var appID: String? { credentials[.appID] }
+    var appID: String? { credentials[.appIDKey] }
 }
 
 private extension String {
     /// AdColony keys
-    static let appID = "adc_app_id"
+    static let appIDKey = "adc_app_id"
 }

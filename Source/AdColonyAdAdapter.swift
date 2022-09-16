@@ -46,7 +46,7 @@ final class AdColonyAdAdapter: NSObject, PartnerLogger, PartnerErrorFactory {
     ///   - viewController: The ViewController for ad presentation purposes.
     ///   - completion: The completion handler to notify Helium of ad load completion result.
     func load(viewController: UIViewController?, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
-        let loadCompletion: (Result<PartnerAd, Error>) -> Void = { [weak self] result in
+        loadCompletion = { [weak self] result in
             if let self = self {
                 do {
                     self.log(.loadSucceeded(try result.get()))
@@ -66,10 +66,10 @@ final class AdColonyAdAdapter: NSObject, PartnerLogger, PartnerErrorFactory {
                 log(.loadFailed(request, error: error))
                 return completion(.failure(error))
             }
-            loadBanner(viewController: viewController, request: request, completion: loadCompletion)
+            loadBanner(viewController: viewController, request: request)
 
         case .interstitial, .rewarded:
-            loadInterstitial(request: request, completion: loadCompletion)
+            loadInterstitial(request: request)
         }
     }
 
@@ -85,7 +85,7 @@ final class AdColonyAdAdapter: NSObject, PartnerLogger, PartnerErrorFactory {
             completion(.success(partnerAd))
 
         case .interstitial, .rewarded:
-            showInterstitial(viewController: viewController, completion: completion)
+            completion(showInterstitial(viewController: viewController))
         }
     }
 }

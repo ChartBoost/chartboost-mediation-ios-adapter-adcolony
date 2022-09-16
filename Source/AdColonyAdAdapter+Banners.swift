@@ -12,16 +12,15 @@ extension AdColonyAdAdapter {
     /// - Parameters:
     ///   - viewController: The ViewController for ad presentation purposes.
     ///   - request: The relevant data associated with the current ad load call.
-    ///   - completion: The completion handler to notify Helium of ad load completion result.
-    func loadBanner(viewController: UIViewController, request: PartnerAdLoadRequest, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
+    func loadBanner(viewController: UIViewController, request: PartnerAdLoadRequest) {
         guard request.partnerPlacement == zone.identifier else {
-            return completion(.failure(error(.loadFailure(request), description: "partnerPlacement != zone.identifier")))
+            loadCompletion?(.failure(error(.loadFailure(request), description: "partnerPlacement != zone.identifier")))
+            return
         }
         guard let bidPayload = request.adm, !bidPayload.isEmpty else {
-            return completion(.failure(error(.noBidPayload(request))))
+            loadCompletion?(.failure(error(.noBidPayload(request))))
+            return
         }
-
-        loadCompletion = completion
 
         let width = request.size?.width ?? 320
         let height = request.size?.height ?? 50

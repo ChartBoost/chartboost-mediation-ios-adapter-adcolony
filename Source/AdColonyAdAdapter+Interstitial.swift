@@ -11,16 +11,15 @@ extension AdColonyAdAdapter: AdColonyInterstitialDelegate {
     /// Attempt to load an interstitial ad.
     /// - Parameters:
     ///   - request: The relevant data associated with the current ad load call.
-    ///   - completion: The completion handler to notify Helium of ad load completion result.
-    func loadInterstitial(request: PartnerAdLoadRequest, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
+    func loadInterstitial(request: PartnerAdLoadRequest) {
         guard request.partnerPlacement == zone.identifier else {
-            return completion(.failure(error(.loadFailure(request), description: "partnerPlacement != zone.identifier")))
+            loadCompletion?(.failure(error(.loadFailure(request), description: "partnerPlacement != zone.identifier")))
+            return
         }
         guard let bidPayload = request.adm, !bidPayload.isEmpty else {
-            return completion(.failure(error(.noBidPayload(request))))
+            loadCompletion?(.failure(error(.noBidPayload(request))))
+            return
         }
-
-        loadCompletion = completion
 
         let options = AdColonyAdOptions()
         options.setOption("adm", withStringValue: bidPayload)
@@ -39,17 +38,17 @@ extension AdColonyAdAdapter: AdColonyInterstitialDelegate {
     /// - Parameters:
     ///   - viewController: The ViewController for ad presentation purposes.
     ///   - completion: The completion handler to notify Helium of ad show completion result.
-    func showInterstitial(viewController: UIViewController, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
+    func showInterstitial(viewController: UIViewController) -> Result<PartnerAd, Error> {
         guard let ad = partnerAd.ad as? AdColonyInterstitial else {
             let error = error(.showFailure(partnerAd), description: "Ad instance is nil/not an AdColonyInterstitial.")
             log(.loadFailed(request, error: error))
-            return completion(.failure(error))
+            return .failure(error)
         }
 
         ad.show(withPresenting: viewController)
 
         log(.loadSucceeded(partnerAd))
-        return completion(.success(partnerAd))
+        return .success(partnerAd)
     }
 
     // MARK: - AdColonyInterstitialDelegate

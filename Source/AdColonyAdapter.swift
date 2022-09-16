@@ -55,7 +55,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
             if zones.isEmpty {
                 let error = self.error(.setUpFailure, description: "No active zones")
                 self.log(.setUpFailed(error))
-                return completion(error)
+               completion(error)
             }
             else {
                 // Map the zones array into the zones dictionary property with the key

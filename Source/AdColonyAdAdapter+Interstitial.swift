@@ -79,6 +79,7 @@ extension AdColonyAdAdapter: AdColonyInterstitialDelegate {
 
     private func didReceiveReward(amount: Int) {
         let reward = Reward(amount: Int(amount), label: "")
+
         log(.didReward(partnerAd, reward: reward))
         partnerAdDelegate?.didReward(partnerAd, reward: reward) ?? log(.delegateUnavailable)
     }

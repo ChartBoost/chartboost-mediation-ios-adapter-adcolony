@@ -46,11 +46,6 @@ extension AdColonyAdAdapter: AdColonyAdViewDelegate {
         loadCompletion = nil
     }
 
-    func adColonyAdViewDidShow(_ adView: AdColonyAdView) {
-        log(.didTrackImpression(partnerAd))
-        partnerAdDelegate?.didTrackImpression(partnerAd) ?? log(.delegateUnavailable)
-    }
-
     func adColonyAdViewDidClose(_ adView: AdColonyAdView) {
         log(.didDismiss(partnerAd, error: nil))
         partnerAdDelegate?.didDismiss(partnerAd, error: nil)

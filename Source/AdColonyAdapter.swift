@@ -182,7 +182,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
 
 /// Convenience extension to access AdColony credentials from the configuration.
 private extension PartnerConfiguration {
-    var appID: String? { credentials[.appIDKey] }
+    var appID: String? { credentials[.appIDKey] as? String }
 }
 
 private extension String {

@@ -41,13 +41,13 @@ extension AdColonyAdAdapter: AdColonyInterstitialDelegate {
     func showInterstitial(viewController: UIViewController) -> Result<PartnerAd, Error> {
         guard let ad = partnerAd.ad as? AdColonyInterstitial else {
             let error = error(.showFailure(partnerAd), description: "Ad instance is nil/not an AdColonyInterstitial.")
-            log(.loadFailed(request, error: error))
+            log(.showFailed(partnerAd, error: error))
             return .failure(error)
         }
 
         ad.show(withPresenting: viewController)
 
-        log(.loadSucceeded(partnerAd))
+        log(.showSucceeded(partnerAd))
         return .success(partnerAd)
     }
 

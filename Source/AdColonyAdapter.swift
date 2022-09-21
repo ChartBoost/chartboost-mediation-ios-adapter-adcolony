@@ -100,6 +100,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// Notify the partner SDK of the GDPR consent status as determined by the Helium SDK.
     /// - Parameter status: The user's current GDPR consent status.
     func setGDPRConsentStatus(_ status: GDPRConsentStatus) {
+        log(.setGDPRConsent(status))
         guard status != .unknown else { return }
         Self.options.setPrivacyConsentString(status == .granted ? "1" : "0", forType: ADC_GDPR)
         AdColony.setAppOptions(Self.options)
@@ -108,6 +109,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// Notify the partner SDK of the COPPA subjectivity as determined by the Helium SDK.
     /// - Parameter isSubject: True if the user is subject to COPPA, false otherwise.
     func setUserSubjectToCOPPA(_ isSubject: Bool) {
+        log(.setCOPPAConsent(isSubject))
         Self.options.setPrivacyFrameworkOfType(ADC_COPPA, isRequired: isSubject)
         AdColony.setAppOptions(Self.options)
     }
@@ -117,6 +119,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     ///   - hasGivenConsent: True if the user has given CCPA consent, false otherwise.
     ///   - privacyString: The CCPA privacy String.
     func setCCPAConsent(hasGivenConsent: Bool, privacyString: String?) {
+        log(.setCCPAConsent(hasGivenConsent))
         Self.options.setPrivacyConsentString(hasGivenConsent ? "1" : "0", forType: ADC_CCPA)
         AdColony.setAppOptions(Self.options)
     }

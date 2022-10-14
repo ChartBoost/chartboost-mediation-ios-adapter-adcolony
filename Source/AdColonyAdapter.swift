@@ -8,22 +8,22 @@ import HeliumSdk
 import AdColony
 import UIKit
 
+/// The Helium AdColony adapter.
 final class AdColonyAdapter: NSObject, PartnerAdapter {
-    /// Get the version of the partner SDK.
+    
+    /// The version of the partner SDK, e.g. "5.13.2"
     let partnerSDKVersion: String = AdColony.getSDKVersion()
     
-    /// Get the version of the mediation adapter.
+    /// The version of the adapter, e.g. "2.5.13.2.0"
+    /// The first number is Helium SDK's major version. The next 3 numbers are the partner SDK version. The last number is the build version of the adapter.
     let adapterVersion = "4.4.9.0.0"
     
-    /// Get the internal name of the partner.
+    /// The partner's identifier.
     let partnerIdentifier = "adcolony"
     
-    /// Get the external/official name of the partner.
+    /// The partner's name in a human-friendly version.
     let partnerDisplayName = "AdColony"
     
-    /// Storage of adapter instances.  Keyed by the request identifier.
-    var adapters: [String: AdColonyAdAdapter] = [:]
-
     /// AdColony app options.  It's static, for the sake of AdColonyAdapterConfiguration needing to
     /// amend these options for verbose logging, test mode, and perhaps others in the future.
     static var options: AdColonyAppOptions = {
@@ -35,11 +35,16 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// The AdColony zones, populated during setup.
     private typealias ZoneIdentifier = String
     private var zones: [ZoneIdentifier: AdColonyZone] = [:]
+    
+    /// The designated initializer for the adapter.
+    /// Helium SDK will use this constructor to create instances of conforming types.
+    /// - parameter storage: An object that exposes storage managed by the Helium SDK to the adapter.
+    /// It includes a list of created `PartnerAd` instances. You may ignore this parameter if you don't need it.
+    init(storage: PartnerAdapterStorage) {}
 
-    /// Onitialize the partner SDK so that it's ready to request and display ads.
-    /// - Parameters:
-    ///   - configuration: The necessary initialization data provided by Helium.
-    ///   - completion: Handler to notify Helium of task completion.
+    /// Does any setup needed before beginning to load ads.
+    /// - parameter configuration: Configuration data for the adapter to set up.
+    /// - parameter completion: Closure to be performed by the adapter when it's done setting up. It should include an error indicating the cause for failure or `nil` if the operation finished successfully.
     func setUp(with configuration: PartnerConfiguration, completion: @escaping (Error?) -> Void) {
         log(.setUpStarted)
         guard let appID = configuration.appID, !appID.isEmpty else {
@@ -71,17 +76,16 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
         }
     }
     
-    /// Compute and return a bid token for the bid request.
-    /// - Parameters:
-    ///   - request: The necessary data associated with the current bid request.
-    ///   - completion: Handler to notify Helium of task completion.
-    func fetchBidderInformation(request: PreBidRequest, completion: @escaping ([String : String]) -> Void) {
+    /// Fetches bidding tokens needed for the partner to participate in an auction.
+    /// - parameter request: Information about the ad load request.
+    /// - parameter completion: Closure to be performed with the fetched info.
+    func fetchBidderInformation(request: PreBidRequest, completion: @escaping ([String : String]?) -> Void) {
         log(.fetchBidderInfoStarted(request))
         AdColony.collectSignals { [weak self] signals, error in
             guard let self = self else { return }
             if let error = error {
                 self.log(.fetchBidderInfoFailed(request, error: error))
-                completion([:])
+                completion(nil)
             }
             else {
                 self.log(.fetchBidderInfoSucceeded(request))
@@ -90,98 +94,61 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
         }
     }
     
-    /// Notify the partner SDK of GDPR applicability as determined by the Helium SDK.
-    /// - Parameter applies: true if GDPR applies, false otherwise.
+    /// Indicates if GDPR applies or not.
+    /// - parameter applies: `true` if GDPR applies, `false` otherwise.
     func setGDPRApplies(_ applies: Bool) {
-        log(.privacyUpdated(setting: "'PrivacyFrameworkOfType ADC_GDPR'", value: applies))
         Self.options.setPrivacyFrameworkOfType(ADC_GDPR, isRequired: applies)
         AdColony.setAppOptions(Self.options)
+        log(.privacyUpdated(setting: "privacyFrameworkOfTypeIsRequired", value: [ADC_GDPR: applies]))
    }
     
-    /// Notify the partner SDK of the GDPR consent status as determined by the Helium SDK.
-    /// - Parameter status: The user's current GDPR consent status.
+    /// Indicates the user's GDPR consent status.
+    /// - parameter status: One of the `GDPRConsentStatus` values depending on the user's preference.
     func setGDPRConsentStatus(_ status: GDPRConsentStatus) {
         guard status != .unknown else { return }
         let consentString = status == .granted ? "1" : "0"
-        log(.privacyUpdated(setting: "'PrivacyConsentString ADC_GDPR'", value: consentString))
         Self.options.setPrivacyConsentString(consentString, forType: ADC_GDPR)
         AdColony.setAppOptions(Self.options)
+        log(.privacyUpdated(setting: "privacyConsentString", value: [ADC_GDPR: consentString]))
     }
 
-    /// Notify the partner SDK of the COPPA subjectivity as determined by the Helium SDK.
-    /// - Parameter isSubject: True if the user is subject to COPPA, false otherwise.
+    /// Indicates if the user is subject to COPPA or not.
+    /// - parameter isSubject: `true` if the user is subject, `false` otherwise.
     func setUserSubjectToCOPPA(_ isSubject: Bool) {
-        log(.privacyUpdated(setting: "'PrivacyFrameworkOfType ADC_COPPA'", value: isSubject))
         Self.options.setPrivacyFrameworkOfType(ADC_COPPA, isRequired: isSubject)
         AdColony.setAppOptions(Self.options)
+        log(.privacyUpdated(setting: "privacyFrameworkOfTypeIsRequired", value: [ADC_COPPA: isSubject]))
     }
     
-    /// Notify the partner SDK of the CCPA privacy String as supplied by the Helium SDK.
-    /// - Parameters:
-    ///   - hasGivenConsent: True if the user has given CCPA consent, false otherwise.
-    ///   - privacyString: The CCPA privacy String.
+    /// Indicates the CCPA status both as a boolean and as a IAB US privacy string.
+    /// - parameter hasGivenConsent: A boolean indicating if the user has given consent.
+    /// - parameter privacyString: A IAB-compliant string indicating the CCPA status.
     func setCCPAConsent(hasGivenConsent: Bool, privacyString: String?) {
         let consentString = hasGivenConsent ? "1" : "0"
-        log(.privacyUpdated(setting: "'PrivacyConsentString ADC_CCPA'", value: consentString))
         Self.options.setPrivacyConsentString(consentString, forType: ADC_CCPA)
         AdColony.setAppOptions(Self.options)
+        log(.privacyUpdated(setting: "privacyConsentString", value: [ADC_CCPA: consentString]))
     }
     
-    /// Make an ad request to the partner SDK for the given ad format.
-    /// - Parameters:
-    ///   - request: The relevant data associated with the current ad load call.
-    ///   - partnerAdDelegate: Delegate for ad lifecycle notification purposes.
-    ///   - viewController: The ViewController for ad presentation purposes.
-    ///   - completion: Handler to notify Helium of task completion.
-    func load(request: PartnerAdLoadRequest, partnerAdDelegate: PartnerAdDelegate, viewController: UIViewController?, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
-        log(.loadStarted(request))
+    /// Creates a new ad object in charge of communicating with a single partner SDK ad instance.
+    /// Helium SDK calls this method to create a new ad for each new load request. Ad instances are never reused.
+    /// Helium SDK takes care of storing and disposing of ad instances so you don't need to.
+    /// `invalidate()` is called on ads before disposing of them in case partners need to perform any custom logic before the object gets destroyed.
+    /// If for some reason a new ad cannot be provided an error should be thrown.
+    /// - parameter request: Information about the ad load request.
+    /// - parameter delegate: The delegate that will receive ad life-cycle notifications.
+    func makeAd(request: PartnerAdLoadRequest, delegate: PartnerAdDelegate) throws -> PartnerAd {
         guard let zone = zones[request.partnerPlacement] else {
-            let error = error(.loadFailure(request), description: "zone not found for partner placement")
-            log(.loadFailed(request, error: error))
-            return completion(.failure(error))
+            throw error(.adCreationFailure(request), description: "Zone not found for partner placement")
         }
-
-        let adapter = AdColonyAdAdapter(adapter: self, request: request, partnerAdDelegate: partnerAdDelegate, zone: zone)
-        adapter.load(viewController: viewController, completion: completion)
-
-        adapters[request.identifier] = adapter
-    }
-
-    /// Show the currently loaded ad.
-    /// - Parameters:
-    ///   - partnerAd: The PartnerAd instance containing the ad to be shown.
-    ///   - viewController: The ViewController for ad presentation purposes.
-    ///   - completion: Handler to notify Helium of task completion.
-    func show(_ partnerAd: PartnerAd, viewController: UIViewController, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
-        log(.showStarted(partnerAd))
-
-        // Retrieve the adapter instance to show the ad
-        if let adapter = adapters[partnerAd.request.identifier] {
-            adapter.show(viewController: viewController, completion: completion)
-        } else {
-            let error = error(.noAdReadyToShow(partnerAd))
-            log(.showFailed(partnerAd, error: error))
-            completion(.failure(error))
+        guard request.partnerPlacement == zone.identifier else {
+            throw error(.adCreationFailure(request), description: "Placement is different from the zone identifier.")
         }
-    }
-    
-    /// Discard current ad objects and release resources.
-    /// - Parameters:
-    ///   - partnerAd: The PartnerAd instance containing the ad to be invalidated.
-    ///   - completion: Handler to notify Helium of task completion.
-    func invalidate(_ partnerAd: PartnerAd, completion: @escaping (Result<PartnerAd, Error>) -> Void) {
-        log(.invalidateStarted(partnerAd))
-
-        if adapters[partnerAd.request.identifier] != nil {
-            adapters.removeValue(forKey: partnerAd.request.identifier)
-
-            log(.invalidateSucceeded(partnerAd))
-            completion(.success(partnerAd))
-        } else {
-            let error = error(.noAdToInvalidate(partnerAd))
-
-            log(.invalidateFailed(partnerAd, error: error))
-            completion(.failure(error))
+        switch request.format {
+        case .interstitial, .rewarded:
+            return AdColonyAdapterFullscreenAd(adapter: self, request: request, delegate: delegate, zone: zone)
+        case .banner:
+            return AdColonyAdapterBannerAd(adapter: self, request: request, delegate: delegate, zone: zone)
         }
     }
 }

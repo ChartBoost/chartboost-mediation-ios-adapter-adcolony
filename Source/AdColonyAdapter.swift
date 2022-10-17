@@ -94,24 +94,22 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
         }
     }
     
-    /// Indicates if GDPR applies or not.
-    /// - parameter applies: `true` if GDPR applies, `false` otherwise.
-    func setGDPRApplies(_ applies: Bool) {
-        Self.options.setPrivacyFrameworkOfType(ADC_GDPR, isRequired: applies)
-        AdColony.setAppOptions(Self.options)
-        log(.privacyUpdated(setting: "privacyFrameworkOfTypeIsRequired", value: [ADC_GDPR: applies]))
-   }
-    
-    /// Indicates the user's GDPR consent status.
+    /// Indicates if GDPR applies or not and the user's GDPR consent status.
+    /// - parameter applies: `true` if GDPR applies, `false` if not, `nil` if the publisher has not provided this information.
     /// - parameter status: One of the `GDPRConsentStatus` values depending on the user's preference.
-    func setGDPRConsentStatus(_ status: GDPRConsentStatus) {
-        guard status != .unknown else { return }
-        let consentString = status == .granted ? "1" : "0"
-        Self.options.setPrivacyConsentString(consentString, forType: ADC_GDPR)
+    func setGDPR(applies: Bool?, status: GDPRConsentStatus) {
+        if let applies = applies {
+            Self.options.setPrivacyFrameworkOfType(ADC_GDPR, isRequired: applies)
+            log(.privacyUpdated(setting: "privacyFrameworkOfTypeIsRequired", value: [ADC_GDPR: applies]))
+        }
+        if status != .unknown {
+            let consentString = status == .granted ? "1" : "0"
+            Self.options.setPrivacyConsentString(consentString, forType: ADC_GDPR)
+            log(.privacyUpdated(setting: "privacyConsentString", value: [ADC_GDPR: consentString]))
+        }
         AdColony.setAppOptions(Self.options)
-        log(.privacyUpdated(setting: "privacyConsentString", value: [ADC_GDPR: consentString]))
     }
-
+    
     /// Indicates if the user is subject to COPPA or not.
     /// - parameter isSubject: `true` if the user is subject, `false` otherwise.
     func setUserSubjectToCOPPA(_ isSubject: Bool) {

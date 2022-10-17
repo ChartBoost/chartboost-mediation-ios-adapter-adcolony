@@ -36,9 +36,10 @@ final class AdColonyAdapterFullscreenAd: AdColonyAdapterAd, PartnerAd {
         options.setOption("adm", withStringValue: bidPayload)
 
         if request.format == .rewarded {
-            zone.setReward { [weak self] success, _, amount in
-                guard let self = self, success else { return }
-                self.didReceiveReward(amount: Int(amount))
+            zone.setReward { [weak self] success, _, _ in
+                if success {
+                    self?.didReceiveReward()
+                }
             }
         }
 
@@ -65,10 +66,9 @@ final class AdColonyAdapterFullscreenAd: AdColonyAdapterAd, PartnerAd {
         completion(.success([:]))
     }
     
-    private func didReceiveReward(amount: Int) {
-        let reward = Reward(amount: Int(amount), label: nil)
-        log(.didReward(reward))
-        delegate?.didReward(self, details: [:], reward: reward) ?? log(.delegateUnavailable)
+    private func didReceiveReward() {
+        log(.didReward)
+        delegate?.didReward(self, details: [:]) ?? log(.delegateUnavailable)
     }
 }
 

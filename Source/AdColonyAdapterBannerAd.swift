@@ -70,7 +70,7 @@ extension AdColonyAdapterBannerAd: AdColonyAdViewDelegate {
     }
 
     func adColonyAdViewDidClose(_ adView: AdColonyAdView) {
-        log("adColonyAdViewDidClose")
+        log(.delegateCallIgnored)
     }
 
     func adColonyAdViewDidReceiveClick(_ adView: AdColonyAdView) {

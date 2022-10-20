@@ -111,17 +111,17 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     }
     
     /// Indicates if the user is subject to COPPA or not.
-    /// - parameter isSubject: `true` if the user is subject, `false` otherwise.
-    func setUserSubjectToCOPPA(_ isSubject: Bool) {
-        Self.options.setPrivacyFrameworkOfType(ADC_COPPA, isRequired: isSubject)
+    /// - parameter isChildDirected: `true` if the user is subject to COPPA, `false` otherwise.
+    func setCOPPA(isChildDirected: Bool) {
+        Self.options.setPrivacyFrameworkOfType(ADC_COPPA, isRequired: isChildDirected)
         AdColony.setAppOptions(Self.options)
-        log(.privacyUpdated(setting: "privacyFrameworkOfTypeIsRequired", value: [ADC_COPPA: isSubject]))
+        log(.privacyUpdated(setting: "privacyFrameworkOfTypeIsRequired", value: [ADC_COPPA: isChildDirected]))
     }
     
     /// Indicates the CCPA status both as a boolean and as an IAB US privacy string.
     /// - parameter hasGivenConsent: A boolean indicating if the user has given consent.
     /// - parameter privacyString: An IAB-compliant string indicating the CCPA status.
-    func setCCPAConsent(hasGivenConsent: Bool, privacyString: String?) {
+    func setCCPA(hasGivenConsent: Bool, privacyString: String) {
         let consentString = hasGivenConsent ? "1" : "0"
         Self.options.setPrivacyConsentString(consentString, forType: ADC_CCPA)
         AdColony.setAppOptions(Self.options)

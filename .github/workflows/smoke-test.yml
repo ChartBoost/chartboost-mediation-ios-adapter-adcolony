@@ -1,0 +1,21 @@
+name: Smoke Test
+
+on:
+  # On pull requests to main
+  pull_request:
+    branches:
+      - main
+  # Manual trigger from the Github Actions tab
+  workflow_dispatch:
+
+jobs:
+  validate-podspec:
+    runs-on: macos-latest
+    steps:
+      # Check out the repo.
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Validate the podspec.
+      - name: Validate Podspec
+        run: pod spec lint --allow-warnings --verbose

@@ -148,6 +148,8 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
             return AdColonyAdapterFullscreenAd(adapter: self, request: request, delegate: delegate, zone: zone)
         case .banner:
             return AdColonyAdapterBannerAd(adapter: self, request: request, delegate: delegate, zone: zone)
+        @unknown default:
+            throw error(.adFormatNotSupported(request))
         }
     }
 }

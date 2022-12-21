@@ -18,4 +18,4 @@ jobs:
 
       # Validate the podspec.
       - name: Validate Podspec
-        run: pod spec lint --allow-warnings --verbose
+        run: pod spec lint --verbose

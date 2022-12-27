@@ -21,12 +21,12 @@ final class AdColonyAdapterBannerAd: AdColonyAdapterAd, PartnerAd {
         log(.loadStarted)
         
         guard let bidPayload = request.adm, !bidPayload.isEmpty else {
-            let error = error(.noBidPayload)
+            let error = error(.loadFailureInvalidAdMarkup)
             log(.loadFailed(error))
             return completion(.failure(error))
         }
         guard let viewController = viewController else {
-            let error = error(.noViewController)
+            let error = error(.showFailureViewControllerNotFound)
             log(.loadFailed(error))
             return completion(.failure(error))
         }
@@ -63,7 +63,7 @@ extension AdColonyAdapterBannerAd: AdColonyAdViewDelegate {
     }
 
     func adColonyAdViewDidFail(toLoad partnerError: AdColonyAdRequestError) {
-        let error = error(.loadFailure, error: partnerError)
+        let error = error(.loadFailureException, error: partnerError)
         log(.loadFailed(error))
         loadCompletion?(.failure(error)) ?? log(.loadResultIgnored)
         loadCompletion = nil

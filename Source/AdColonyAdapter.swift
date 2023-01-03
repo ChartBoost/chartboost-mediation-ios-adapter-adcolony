@@ -60,7 +60,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
         AdColony.configure(withAppID: appID, options: Self.options) { [weak self] zones in
             guard let self = self else { return }
             if zones.isEmpty {
-                let error = self.error(.initializationFailurePartnerNotIntegrated, description: "No active zones")
+                let error = self.error(.initializationFailureUnknown, description: "No active zones")
                 self.log(.setUpFailed(error))
                 completion(error)
             }

@@ -84,7 +84,7 @@ extension AdColonyAdapterFullscreenAd: AdColonyInterstitialDelegate {
     }
 
     func adColonyInterstitialDidFail(toLoad partnerError: AdColonyAdRequestError) {
-        let error = error(.loadFailureException, error: partnerError)
+        let error = error(.loadFailureUnknown, error: partnerError)
         log(.loadFailed(error))
         loadCompletion?(.failure(error)) ?? log(.loadResultIgnored)
         loadCompletion = nil

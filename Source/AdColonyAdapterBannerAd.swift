@@ -26,7 +26,7 @@ final class AdColonyAdapterBannerAd: AdColonyAdapterAd, PartnerAd {
             return completion(.failure(error))
         }
         guard let viewController = viewController else {
-            let error = error(.showFailureViewControllerNotFound)
+            let error = error(.loadFailureViewControllerNotFound)
             log(.loadFailed(error))
             return completion(.failure(error))
         }
@@ -63,7 +63,7 @@ extension AdColonyAdapterBannerAd: AdColonyAdViewDelegate {
     }
 
     func adColonyAdViewDidFail(toLoad partnerError: AdColonyAdRequestError) {
-        let error = error(.loadFailureException, error: partnerError)
+        let error = error(.loadFailureUnknown, error: partnerError)
         log(.loadFailed(error))
         loadCompletion?(.failure(error)) ?? log(.loadResultIgnored)
         loadCompletion = nil

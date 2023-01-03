@@ -49,7 +49,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     func setUp(with configuration: PartnerConfiguration, completion: @escaping (Error?) -> Void) {
         log(.setUpStarted)
         guard let appID = configuration.appID, !appID.isEmpty else {
-            let error = error(.missingSetUpParameter(key: .appIDKey))
+            let error = error(.initializationFailureInvalidCredentials, description: "Missing \(String.appIDKey)")
             log(.setUpFailed(error))
             return completion(error)
         }
@@ -60,7 +60,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
         AdColony.configure(withAppID: appID, options: Self.options) { [weak self] zones in
             guard let self = self else { return }
             if zones.isEmpty {
-                let error = self.error(.setUpFailure, description: "No active zones")
+                let error = self.error(.initializationFailureUnknown, description: "No active zones")
                 self.log(.setUpFailed(error))
                 completion(error)
             }
@@ -138,10 +138,10 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// - parameter delegate: The delegate that will receive ad life-cycle notifications.
     func makeAd(request: PartnerAdLoadRequest, delegate: PartnerAdDelegate) throws -> PartnerAd {
         guard let zone = zones[request.partnerPlacement] else {
-            throw error(.adCreationFailure(request), description: "Zone not found for partner placement")
+            throw error(.loadFailureAborted, description: "Zone not found for partner placement")
         }
         guard request.partnerPlacement == zone.identifier else {
-            throw error(.adCreationFailure(request), description: "Placement is different from the zone identifier.")
+            throw error(.loadFailureAborted, description: "Placement is different from the zone identifier.")
         }
         switch request.format {
         case .interstitial, .rewarded:
@@ -149,7 +149,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
         case .banner:
             return AdColonyAdapterBannerAd(adapter: self, request: request, delegate: delegate, zone: zone)
         @unknown default:
-            throw error(.adFormatNotSupported(request))
+            throw error(.loadFailureUnsupportedAdFormat)
         }
     }
 }

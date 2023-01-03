@@ -24,7 +24,7 @@ final class AdColonyAdapterFullscreenAd: AdColonyAdapterAd, PartnerAd {
         log(.loadStarted)
         
         guard let bidPayload = request.adm, !bidPayload.isEmpty else {
-            let error = error(.noBidPayload)
+            let error = error(.loadFailureInvalidAdMarkup)
             log(.loadFailed(error))
             completion(.failure(error))
             return
@@ -54,7 +54,7 @@ final class AdColonyAdapterFullscreenAd: AdColonyAdapterAd, PartnerAd {
         log(.showStarted)
         
         guard let ad = ad else {
-            let error = error(.noAdReadyToShow)
+            let error = error(.showFailureAdNotReady)
             log(.showFailed(error))
             completion(.failure(error))
             return
@@ -84,7 +84,7 @@ extension AdColonyAdapterFullscreenAd: AdColonyInterstitialDelegate {
     }
 
     func adColonyInterstitialDidFail(toLoad partnerError: AdColonyAdRequestError) {
-        let error = error(.loadFailure, error: partnerError)
+        let error = error(.loadFailureUnknown, error: partnerError)
         log(.loadFailed(error))
         loadCompletion?(.failure(error)) ?? log(.loadResultIgnored)
         loadCompletion = nil

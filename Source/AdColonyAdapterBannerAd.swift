@@ -31,6 +31,8 @@ final class AdColonyAdapterBannerAd: AdColonyAdapterAd, PartnerAd {
             return completion(.failure(error))
         }
         
+        loadCompletion = completion
+        
         let size = AdColonyAdSizeFromCGSize(request.size ?? IABStandardAdSize)
         let options = AdColonyAdOptions()
         options.setOption("adm", withStringValue: bidPayload)

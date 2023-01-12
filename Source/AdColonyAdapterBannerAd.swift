@@ -65,9 +65,8 @@ extension AdColonyAdapterBannerAd: AdColonyAdViewDelegate {
     }
 
     func adColonyAdViewDidFail(toLoad partnerError: AdColonyAdRequestError) {
-        let error = error(.loadFailureUnknown, error: partnerError)
-        log(.loadFailed(error))
-        loadCompletion?(.failure(error)) ?? log(.loadResultIgnored)
+        log(.loadFailed(partnerError))
+        loadCompletion?(.failure(partnerError)) ?? log(.loadResultIgnored)
         loadCompletion = nil
     }
 

@@ -1,10 +1,8 @@
 name: Release
 
 on:
-  # When any release tag is pushed.
-  push:
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+(.[0-9]+)?'
+  # Manual trigger from the Github Actions tab
+  workflow_dispatch:
 
 env:
   COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
@@ -16,6 +14,17 @@ jobs:
       # Check out the repo.
       - name: Checkout
         uses: actions/checkout@v3
+
+      # Obtain the new adapter version.
+      - name: Obtain Adapter Version
+        id: release_version
+        run: echo "::set-output name=version::$(ruby ./Scripts/adapter_version.rb)"
+        shell: bash
+
+      # Push the release tag.
+      - name: Tag
+        run: git tag ${{ steps.release_version.outputs.version }} && git push origin ${{ steps.release_version.outputs.version }}
+        shell: bash
 
       # Push the podspec.
       - name: Push Podspec

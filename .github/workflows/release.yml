@@ -6,6 +6,9 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+.[0-9]+.[0-9]+(.[0-9]+)?'
 
+env:
+  COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+
 jobs:
   release-adapter:
     runs-on: macos-latest

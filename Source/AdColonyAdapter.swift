@@ -8,9 +8,9 @@
 //  ChartboostHeliumAdapterAdColony
 //
 
-import Foundation
-import HeliumSdk
 import AdColony
+import ChartboostMediationSDK
+import Foundation
 import UIKit
 
 /// The Helium AdColony adapter.

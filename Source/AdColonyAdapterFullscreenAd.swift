@@ -8,9 +8,9 @@
 //  ChartboostHeliumAdapterAdColony
 //
 
-import Foundation
-import HeliumSdk
 import AdColony
+import ChartboostMediationSDK
+import Foundation
 
 /// The Helium InMobi adapter fullscreen ad.
 final class AdColonyAdapterFullscreenAd: AdColonyAdapterAd, PartnerAd {

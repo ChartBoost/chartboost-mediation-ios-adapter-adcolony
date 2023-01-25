@@ -1,6 +1,6 @@
 # Chartboost Mediation AdColony Adapter
 
-The Chartboost Mediation AdColony adapter mediates the AdColony SDK into the Chartboost Mediation SDK.
+The Chartboost Mediation AdColony adapter mediates AdColony via the Chartboost Mediation SDK.
 
 ## Minimum Requirements
 

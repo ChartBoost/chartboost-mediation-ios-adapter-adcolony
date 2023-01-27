@@ -5,14 +5,14 @@
 
 //
 //  AdColonyAdapterBannerAd.swift
-//  ChartboostHeliumAdapterAdColony
+//  ChartboostMediationAdapterAdColony
 //
 
 import AdColony
 import ChartboostMediationSDK
 import Foundation
 
-/// The Helium InMobi adapter banner ad.
+/// The Chartboost Mediation InMobi adapter banner ad.
 final class AdColonyAdapterBannerAd: AdColonyAdapterAd, PartnerAd {
     
     /// The partner ad view to display inline. E.g. a banner view.

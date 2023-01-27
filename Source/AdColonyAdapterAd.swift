@@ -5,7 +5,7 @@
 
 //
 //  AdColonyAdapterAd.swift
-//  ChartboostHeliumAdapterAdColony
+//  ChartboostMediationAdapterAdColony
 //
 
 import AdColony
@@ -13,7 +13,7 @@ import ChartboostMediationSDK
 import Foundation
 import UIKit
 
-/// Base class for Helium AdColony adapter ads.
+/// Base class for Chartboost Mediation AdColony adapter ads.
 class AdColonyAdapterAd: NSObject {
     
     /// The partner adapter that created this ad.
@@ -30,7 +30,7 @@ class AdColonyAdapterAd: NSObject {
     /// The AdColony zone.
     let zone: AdColonyZone
 
-    /// The completion handler to notify Helium of ad load completion result.
+    /// The completion handler to notify Chartboost Mediation of ad load completion result.
     var loadCompletion: ((Result<PartnerEventDetails, Error>) -> Void)?
     
     init(adapter: PartnerAdapter, request: PartnerAdLoadRequest, delegate: PartnerAdDelegate, zone: AdColonyZone) {

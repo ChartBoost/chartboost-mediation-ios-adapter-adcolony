@@ -5,7 +5,7 @@
 
 //
 //  AdColonyAdapterConfiguration.swift
-//  ChartboostHeliumAdapterAdColony
+//  ChartboostMediationAdapterAdColony
 //
 
 import AdColony

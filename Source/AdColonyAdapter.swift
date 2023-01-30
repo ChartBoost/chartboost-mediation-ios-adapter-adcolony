@@ -165,23 +165,24 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// Only implement if the partner SDK provides its own list of error codes that can be mapped to Helium's.
     /// If some case cannot be mapped return `nil` to let Helium choose a default error code.
     func mapLoadError(_ error: Error) -> HeliumError.Code? {
-        guard let error = error as? AdColonyAdRequestError else {
+        guard let error = error as? AdColonyAdRequestError,
+              let code = AdColonyRequestError(rawValue: UInt(error.code)) else {
             return nil
         }
-        switch UInt(error.code) {
-        case AdColonyRequestError.invalidRequest.rawValue:
+        switch code {
+        case .invalidRequest:
             return .loadFailureInvalidAdRequest
-        case AdColonyRequestError.skippedRequest.rawValue:
+        case .skippedRequest:
             return .loadFailureRateLimited
-        case AdColonyRequestError.noFillForRequest.rawValue:
+        case .noFillForRequest:
             return .loadFailureNoFill
-        case AdColonyRequestError.unready.rawValue:
+        case .unready:
             return .loadFailurePartnerNotInitialized
-        case AdColonyRequestError.featureUnsupported.rawValue:
+        case .featureUnsupported:
             return .loadFailureOSVersionNotSupported
-        case AdColonyRequestError.unexpected.rawValue:
+        case .unexpected:
             return .loadFailureUnknown
-        default:
+        @unknown default:
             return nil
         }
     }

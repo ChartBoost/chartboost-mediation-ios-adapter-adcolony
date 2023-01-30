@@ -59,7 +59,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
             return completion(error)
         }
 
-        Self.options.mediationNetwork = "Helium"
+        Self.options.mediationNetwork = "Chartboost"
         Self.options.mediationNetworkVersion = Helium.sdkVersion
 
         AdColony.configure(withAppID: appID, options: Self.options) { [weak self] zones in

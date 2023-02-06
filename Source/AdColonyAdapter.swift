@@ -152,6 +152,35 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
             throw error(.loadFailureUnsupportedAdFormat)
         }
     }
+    
+    /// Maps a partner load error to a Helium error code.
+    /// Helium SDK calls this method when a load completion is called with a partner error.
+    ///
+    /// A default implementation is provided that returns `nil`.
+    /// Only implement if the partner SDK provides its own list of error codes that can be mapped to Helium's.
+    /// If some case cannot be mapped return `nil` to let Helium choose a default error code.
+    func mapLoadError(_ error: Error) -> HeliumError.Code? {
+        guard let error = error as? AdColonyAdRequestError,
+              let code = AdColonyRequestError(rawValue: UInt(error.code)) else {
+            return nil
+        }
+        switch code {
+        case .invalidRequest:
+            return .loadFailureInvalidAdRequest
+        case .skippedRequest:
+            return .loadFailureRateLimited
+        case .noFillForRequest:
+            return .loadFailureNoFill
+        case .unready:
+            return .loadFailurePartnerNotInitialized
+        case .featureUnsupported:
+            return .loadFailureOSVersionNotSupported
+        case .unexpected:
+            return .loadFailureUnknown
+        @unknown default:
+            return nil
+        }
+    }
 }
 
 /// Convenience extension to access AdColony credentials from the configuration.

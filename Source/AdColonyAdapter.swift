@@ -99,6 +99,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// - parameter applies: `true` if GDPR applies, `false` if not, `nil` if the publisher has not provided this information.
     /// - parameter status: One of the `GDPRConsentStatus` values depending on the user's preference.
     func setGDPR(applies: Bool?, status: GDPRConsentStatus) {
+        // See https://github.com/AdColony/AdColony-iOS-SDK/wiki/Privacy-Laws
         if let applies = applies {
             Self.options.setPrivacyFrameworkOfType(ADC_GDPR, isRequired: applies)
             log(.privacyUpdated(setting: "privacyFrameworkOfTypeIsRequired", value: [ADC_GDPR: applies]))
@@ -114,6 +115,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// Indicates if the user is subject to COPPA or not.
     /// - parameter isChildDirected: `true` if the user is subject to COPPA, `false` otherwise.
     func setCOPPA(isChildDirected: Bool) {
+        // See https://github.com/AdColony/AdColony-iOS-SDK/wiki/Privacy-Laws
         Self.options.setPrivacyFrameworkOfType(ADC_COPPA, isRequired: isChildDirected)
         AdColony.setAppOptions(Self.options)
         log(.privacyUpdated(setting: "privacyFrameworkOfTypeIsRequired", value: [ADC_COPPA: isChildDirected]))
@@ -123,6 +125,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
     /// - parameter hasGivenConsent: A boolean indicating if the user has given consent.
     /// - parameter privacyString: An IAB-compliant string indicating the CCPA status.
     func setCCPA(hasGivenConsent: Bool, privacyString: String) {
+        // See https://github.com/AdColony/AdColony-iOS-SDK/wiki/Privacy-Laws
         let consentString = hasGivenConsent ? "1" : "0"
         Self.options.setPrivacyConsentString(consentString, forType: ADC_CCPA)
         AdColony.setAppOptions(Self.options)

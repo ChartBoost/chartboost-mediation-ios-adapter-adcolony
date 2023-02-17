@@ -23,17 +23,12 @@ final class AdColonyAdapterFullscreenAd: AdColonyAdapterAd, PartnerAd {
     func load(with viewController: UIViewController?, completion: @escaping (Result<PartnerEventDetails, Error>) -> Void) {
         log(.loadStarted)
         
-        guard let bidPayload = request.adm, !bidPayload.isEmpty else {
-            let error = error(.loadFailureInvalidAdMarkup)
-            log(.loadFailed(error))
-            completion(.failure(error))
-            return
-        }
-        
         loadCompletion = completion
 
         let options = AdColonyAdOptions()
-        options.setOption("adm", withStringValue: bidPayload)
+        if let adm = request.adm {
+            options.setOption("adm", withStringValue: adm)
+        }
 
         if request.format == .rewarded {
             zone.setReward { [weak self] success, _, _ in

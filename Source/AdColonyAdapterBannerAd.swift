@@ -20,11 +20,6 @@ final class AdColonyAdapterBannerAd: AdColonyAdapterAd, PartnerAd {
     func load(with viewController: UIViewController?, completion: @escaping (Result<PartnerEventDetails, Error>) -> Void) {
         log(.loadStarted)
         
-        guard let bidPayload = request.adm, !bidPayload.isEmpty else {
-            let error = error(.loadFailureInvalidAdMarkup)
-            log(.loadFailed(error))
-            return completion(.failure(error))
-        }
         guard let viewController = viewController else {
             let error = error(.loadFailureViewControllerNotFound)
             log(.loadFailed(error))
@@ -35,7 +30,9 @@ final class AdColonyAdapterBannerAd: AdColonyAdapterAd, PartnerAd {
         
         let size = AdColonyAdSizeFromCGSize(request.size ?? IABStandardAdSize)
         let options = AdColonyAdOptions()
-        options.setOption("adm", withStringValue: bidPayload)
+        if let adm = request.adm {
+            options.setOption("adm", withStringValue: adm)
+        }
 
         AdColony.requestAdView(
             inZone: request.partnerPlacement,

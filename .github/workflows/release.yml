@@ -18,7 +18,7 @@ jobs:
       # Obtain the new adapter version.
       - name: Obtain Adapter Version
         id: release_version
-        run: echo "version=$(ruby ./Scripts/adapter_version.rb)" >> $GITHUB_OUTPUT
+        run: echo "version=$(ruby ./Scripts/adapter-version.rb)" >> $GITHUB_OUTPUT
         shell: bash
 
       # Push the release tag.

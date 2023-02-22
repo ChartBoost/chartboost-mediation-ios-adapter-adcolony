@@ -1,4 +1,4 @@
-require_relative 'podspec_version'
+require_relative 'podspec-version'
 
 PODSPEC_NAME_REGEX = /^\s*spec\.name\s*=\s*'([^']+)'\s*$/
 ADAPTER_VERSION_REGEX = /^\s*let adapterVersion\s*=\s*"([^"]+)".*$/

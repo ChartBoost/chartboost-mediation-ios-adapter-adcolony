@@ -19,7 +19,7 @@ jobs:
       # Check that the adapter version in the podpsec and in the PartnerAdapter Swift implementation are the same.
       - name: Validate Adapter and Podspec Version Match
         id: adapter_version_match
-        run: echo "result=$(ruby ./Scripts/validate_adapter_version.rb)" >> $GITHUB_OUTPUT
+        run: echo "result=$(ruby ./Scripts/validate-adapter-version.rb)" >> $GITHUB_OUTPUT
         shell: bash
 
       # Fail if versions don't match

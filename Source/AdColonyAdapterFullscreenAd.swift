@@ -1,13 +1,13 @@
+// Copyright 2022-2023 Chartboost, Inc.
 //
-//  AdColonyAdapterFullscreenAd.swift
-//  ChartboostHeliumAdapterAdColony
-//
+// Use of this source code is governed by an MIT-style
+// license that can be found in the LICENSE file.
 
-import Foundation
-import HeliumSdk
 import AdColony
+import ChartboostMediationSDK
+import Foundation
 
-/// The Helium InMobi adapter fullscreen ad.
+/// The Chartboost Mediation InMobi adapter fullscreen ad.
 final class AdColonyAdapterFullscreenAd: AdColonyAdapterAd, PartnerAd {
     
     /// The partner ad view to display inline. E.g. a banner view.
@@ -23,17 +23,12 @@ final class AdColonyAdapterFullscreenAd: AdColonyAdapterAd, PartnerAd {
     func load(with viewController: UIViewController?, completion: @escaping (Result<PartnerEventDetails, Error>) -> Void) {
         log(.loadStarted)
         
-        guard let bidPayload = request.adm, !bidPayload.isEmpty else {
-            let error = error(.noBidPayload)
-            log(.loadFailed(error))
-            completion(.failure(error))
-            return
-        }
-        
         loadCompletion = completion
 
         let options = AdColonyAdOptions()
-        options.setOption("adm", withStringValue: bidPayload)
+        if let adm = request.adm {
+            options.setOption("adm", withStringValue: adm)
+        }
 
         if request.format == .rewarded {
             zone.setReward { [weak self] success, _, _ in
@@ -54,7 +49,7 @@ final class AdColonyAdapterFullscreenAd: AdColonyAdapterAd, PartnerAd {
         log(.showStarted)
         
         guard let ad = ad else {
-            let error = error(.noAdReadyToShow)
+            let error = error(.showFailureAdNotReady)
             log(.showFailed(error))
             completion(.failure(error))
             return
@@ -84,9 +79,8 @@ extension AdColonyAdapterFullscreenAd: AdColonyInterstitialDelegate {
     }
 
     func adColonyInterstitialDidFail(toLoad partnerError: AdColonyAdRequestError) {
-        let error = error(.loadFailure, error: partnerError)
-        log(.loadFailed(error))
-        loadCompletion?(.failure(error)) ?? log(.loadResultIgnored)
+        log(.loadFailed(partnerError))
+        loadCompletion?(.failure(partnerError)) ?? log(.loadResultIgnored)
         loadCompletion = nil
     }
 

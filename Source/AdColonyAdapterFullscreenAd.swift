@@ -7,7 +7,7 @@ import AdColony
 import ChartboostMediationSDK
 import Foundation
 
-/// The Chartboost Mediation InMobi adapter fullscreen ad.
+/// The Chartboost Mediation AdColony adapter fullscreen ad.
 final class AdColonyAdapterFullscreenAd: AdColonyAdapterAd, PartnerAd {
     
     /// The partner ad view to display inline. E.g. a banner view.

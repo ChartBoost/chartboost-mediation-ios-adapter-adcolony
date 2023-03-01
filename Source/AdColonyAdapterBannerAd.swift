@@ -7,7 +7,7 @@ import AdColony
 import ChartboostMediationSDK
 import Foundation
 
-/// The Chartboost Mediation InMobi adapter banner ad.
+/// The Chartboost Mediation AdColony adapter banner ad.
 final class AdColonyAdapterBannerAd: AdColonyAdapterAd, PartnerAd {
     
     /// The partner ad view to display inline. E.g. a banner view.

@@ -151,7 +151,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
             return AdColonyAdapterFullscreenAd(adapter: self, request: request, delegate: delegate, zone: zone)
         case .banner:
             return AdColonyAdapterBannerAd(adapter: self, request: request, delegate: delegate, zone: zone)
-        @unknown default:
+        default:
             throw error(.loadFailureUnsupportedAdFormat)
         }
     }

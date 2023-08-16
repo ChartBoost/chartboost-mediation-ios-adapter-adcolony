@@ -4,9 +4,12 @@
 // license that can be found in the LICENSE file.
 
 import AdColony
+import os.log
 
 /// A list of externally configurable properties pertaining to the partner SDK that can be retrieved and set by publishers.
 @objc public class AdColonyAdapterConfiguration: NSObject {
+
+    private static let log = OSLog(subsystem: "com.chartboost.mediation.adapter.adcolony", category: "Configuration")
 
     /// Flag that can optionally be set to enable the partner's test mode.
     /// Disabled by default.
@@ -15,7 +18,9 @@ import AdColony
             let options = AdColonyAdapter.options
             options.testMode = testMode
             AdColony.setAppOptions(options)
-            print("AdColony SDK test mode set to \(testMode)")
+            if #available(iOS 12.0, *) {
+                os_log(.debug, log: log, "AdColony SDK test mode set to %{public}s", "\(testMode)")
+            }
         }
     }
     
@@ -26,7 +31,9 @@ import AdColony
             let options = AdColonyAdapter.options
             options.disableLogging = !verboseLogging
             AdColony.setAppOptions(options)
-            print("AdColony SDK verbose logging set to \(verboseLogging)")
+            if #available(iOS 12.0, *) {
+                os_log(.debug, log: log, "AdColony SDK verbose logging set to %{public}s", "\(verboseLogging)")
+            }
         }
     }
 }

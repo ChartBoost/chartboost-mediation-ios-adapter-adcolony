@@ -147,7 +147,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
             throw error(.loadFailureAborted, description: "Placement is different from the zone identifier.")
         }
         switch request.format {
-        case .interstitial, .rewarded:
+        case .interstitial, .rewarded, .rewardedInterstitial:
             return AdColonyAdapterFullscreenAd(adapter: self, request: request, delegate: delegate, zone: zone)
         case .banner:
             return AdColonyAdapterBannerAd(adapter: self, request: request, delegate: delegate, zone: zone)

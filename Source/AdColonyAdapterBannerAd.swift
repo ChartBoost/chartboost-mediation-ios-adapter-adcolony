@@ -27,8 +27,15 @@ final class AdColonyAdapterBannerAd: AdColonyAdapterAd, PartnerAd {
         }
         
         loadCompletion = completion
-        
-        let size = AdColonyAdSizeFromCGSize(request.size ?? IABStandardAdSize)
+
+        // Fail if we cannot fit a fixed size banner in the requested size.
+        guard let size = fixedBannerSize(for: request.size ?? IABStandardAdSize) else {
+            let error = error(.loadFailureInvalidBannerSize)
+            log(.loadFailed(error))
+            return completion(.failure(error))
+        }
+
+        let adColonySize = AdColonyAdSizeFromCGSize(size)
         let options = AdColonyAdOptions()
         if let adm = request.adm {
             options.setOption("adm", withStringValue: adm)
@@ -36,7 +43,7 @@ final class AdColonyAdapterBannerAd: AdColonyAdapterAd, PartnerAd {
 
         AdColony.requestAdView(
             inZone: request.partnerPlacement,
-            with: size,
+            with: adColonySize,
             andOptions: options,
             viewController: viewController,
             andDelegate: self
@@ -57,7 +64,14 @@ extension AdColonyAdapterBannerAd: AdColonyAdViewDelegate {
     func adColonyAdViewDidLoad(_ adView: AdColonyAdView) {
         log(.loadSucceeded)
         self.inlineView = adView
-        loadCompletion?(.success([:])) ?? log(.loadResultIgnored)
+
+        var partnerDetails: [String: String] = [:]
+        if let loadedSize = fixedBannerSize(for: request.size ?? IABStandardAdSize) {
+            partnerDetails["bannerWidth"] = "\(loadedSize.width)"
+            partnerDetails["bannerHeight"] = "\(loadedSize.height)"
+            partnerDetails["bannerType"] = "0" // Fixed banner
+        }
+        loadCompletion?(.success(partnerDetails)) ?? log(.loadResultIgnored)
         loadCompletion = nil
     }
 
@@ -74,5 +88,22 @@ extension AdColonyAdapterBannerAd: AdColonyAdViewDelegate {
     func adColonyAdViewDidReceiveClick(_ adView: AdColonyAdView) {
         log(.didClick(error: nil))
         delegate?.didClick(self, details: [:]) ?? log(.delegateUnavailable)
+    }
+}
+
+// MARK: - Helpers
+extension AdColonyAdapterBannerAd {
+    private func fixedBannerSize(for requestedSize: CGSize) -> CGSize? {
+        let sizes = [IABLeaderboardAdSize, IABMediumAdSize, IABStandardAdSize]
+        // Find the largest size that can fit in the requested size.
+        for size in sizes {
+            // If height is 0, the pub has requested an ad of any height, so only the width matters.
+            if requestedSize.width >= size.width &&
+                (size.height == 0 || requestedSize.height >= size.height) {
+                return size
+            }
+        }
+        // The requested size cannot fit any fixed size banners.
+        return nil
     }
 }

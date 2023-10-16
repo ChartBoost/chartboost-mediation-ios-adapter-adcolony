@@ -146,6 +146,7 @@ final class AdColonyAdapter: NSObject, PartnerAdapter {
         guard request.partnerPlacement == zone.identifier else {
             throw error(.loadFailureAborted, description: "Placement is different from the zone identifier.")
         }
+        // This partner supports multiple loads for the same partner placement.
         switch request.format {
         case .interstitial, .rewarded:
             return AdColonyAdapterFullscreenAd(adapter: self, request: request, delegate: delegate, zone: zone)

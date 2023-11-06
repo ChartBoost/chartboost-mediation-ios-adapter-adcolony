@@ -11,6 +11,7 @@ Pod::Spec.new do |spec|
   spec.module_name  = 'ChartboostMediationAdapterAdColony'
   spec.source       = { :git => 'https://github.com/ChartBoost/chartboost-mediation-ios-adapter-adcolony.git', :tag => spec.version }
   spec.source_files = 'Source/**/*.{swift}'
+  spec.resource_bundles = { 'ChartboostMediationAdapterAdColony' => ['PrivacyInfo.xcprivacy'] }
   spec.static_framework = true
 
   # Minimum supported versions

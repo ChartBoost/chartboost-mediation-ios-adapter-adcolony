@@ -1,3 +1,12 @@
+**⚠️ DEPRECATED**
+
+---
+
+This partner is no longer supported by Chartboost Mediation. \
+This adapter is now deprecated and will receive no future updates.
+
+---
+
 # Chartboost Mediation AdColony Adapter
 
 The Chartboost Mediation AdColony adapter mediates AdColony via the Chartboost Mediation SDK.
